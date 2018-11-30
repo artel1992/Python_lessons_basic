@@ -4,28 +4,29 @@
 # И второй скрипт, удаляющий эти папки.
 import os
 from shutil import copyfile
-def addDir(name='dir',count=1):
-    count=int(count)
-    dir_names = []
-    if count>1:
+def addDir(name='dir',count=1):#Добавление лирикторий
+    try:
+        count=int(count)#Попытка приобразовать строку в число
+    except ValueError:#Если неудачно то возвращаем ложь
+        return False
+    dir_names = []#список с именами дирикторий
+    if count>1:#если не 1 папка
         for i in range(1,count+1):
             try:
                 os.mkdir(f"{name}_{i}")
-            except FileExistsError:
-                if len(os.listdir(f"{name}_{i}")) == 0:
-                    continue
+            except FileExistsError:# Если папка существует пропускаем итерацию
+                continue
             dir_names.append(f"{name}_{i}")
-                   # os.rmdir(f"{name}_{i}")
 
-    else:
+    else:#Если 1 директория
         try:
             os.mkdir(f"{name}")
-        except FileExistsError:
-            return 'Данная папка существует'
+        except FileExistsError:#Если директория существует вернуть ошибку
+            return 'Данная директория существует'
 
-    if dir_names.__len__()==0:
+    if dir_names.__len__()==0:#если список с именами дирикторий пуст то
         return f'Папка {name} создана'
-    else:
+    else:# если он не пуст то объединяем имена и возвращаем
         dir_names = ' , '.join(dir_names)
         return f'Папки {dir_names} созданы'
 
@@ -33,12 +34,12 @@ def addDir(name='dir',count=1):
 # Напишите скрипт, отображающий папки текущей директории.
 def get_thisDir():
     result = []
-    for path in os.listdir(os.getcwd()):
-        if os.path.isdir(path):
+    for path in os.listdir(os.getcwd()):#Перебераем все содержимое текущей папки
+        if os.path.isdir(path):#Если дириктория
             result.append(f'Папка:{path}')
-        elif os.path.isfile(path):
+        elif os.path.isfile(path):# если файл
             result.append(f'Файл:{path}')
-    result ='\n'.join(result)
+    result ='\n'.join(result)# объединяем всё в одну строку
     return result
 # # Задача-3:
 # # Напишите скрипт, создающий копию файла, из которого запущен данный скрипт.

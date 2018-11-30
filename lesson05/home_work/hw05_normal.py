@@ -16,39 +16,34 @@
 import argparse
 import sys
 import hw05_easy
+import re
 
 
-def get_arg():
-    pars = argparse.ArgumentParser()
-    pars.add_argument('-u','--util',default='1')
-    return pars
-
-def get_command(command=0):
-    a = get_arg()
-    a = a.parse_args(sys.argv[1:])
-    if command==0:
-        if a.util:
-            command = int(input("1. Перейти в папку\n"+
+def get_command(command=0,error=False):
+    if command==0 and not error:
+            command = input("1. Перейти в папку\n"+
                             "2. Просмотреть содержимое текущей папки\n"+
                             "3. Удалить папку\n"+
-                            "4. Создать папку\n"))
-            if command=='':
-                get_command(command=0)
-    elif command >= 1 and command <=4:
+                            "4. Создать папку\n")
+            try:
+                command= int (command)
+            except ValueError:
+                    get_command(command=0,error=True)
+    elif command >= 1 and command <=4 and not error:
         return int(command)
     else:
-        command=int(input("Команда введена не верно, повторите попытку: \n"+
-                                "1. Перейти в папку\n" +
-                                "2. Просмотреть содержимое текущей папки\n" +
-                                "3. Удалить папку\n" +
-                                "4. Создать папку\n"))
-        if command == '':
-            get_command(command=0)
+        print("Команда введена не верно, повторите попытку: ")
+        command=input("1. Перейти в папку\n" +
+                          "2. Просмотреть содержимое текущей папки\n" +
+                          "3. Удалить папку\n" +
+                          "4. Создать папку\n")
+        try:
+            command= int (command)
+        except ValueError:
+            get_command(command=0,error=True)
     return command
 
-
-def util(command):
-
+def util(command,name:str = None,count:int = 1):
     if command==1:
         pass
     elif command==2:
@@ -56,12 +51,14 @@ def util(command):
     elif command==3:
         pass
     elif command==4:
-        name = input('Введите имя')
+        if name == None:
+            name = input('Введите имя')
         count = input('и количество(необязтельно)')
-        if count=='':
-            count=1
-        if name == '':
-            util(command)
-        return hw05_easy.addDir(name,count)
+        result = hw05_easy.addDir(name,count)
+        if result:
+            return result
+        else:
+            print('Количество введено не верно, пожалуйста повторите попытку')
+            util(command,name)
 command =get_command()
 print(util(command))
